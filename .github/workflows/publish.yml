@@ -1,0 +1,50 @@
+name: Publish Rongrong site and screenshots
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright browser for accurate project screenshots
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Render genuine page screenshots
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/rongrong-http.log 2>&1 &
+          sleep 3
+          node scripts/capture-showcase.mjs
+      - name: Save screenshots to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/showcase/*.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "Add actual mobile screenshots of Rongrong v4.8"
+            git push
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
