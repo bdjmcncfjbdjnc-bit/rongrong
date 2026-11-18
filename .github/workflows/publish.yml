@@ -1,11 +1,12 @@
-name: Publish Rongrong site and screenshots
+name: Publish Rongrong site
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -20,38 +21,28 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install Playwright browser for accurate project screenshots
+      - name: Check out website files
+        uses: actions/checkout@v4
+      - name: Prepare static website (no repository writes)
         run: |
-          npm install --no-save playwright
-          npx playwright install --with-deps chromium
-      - name: Render genuine page screenshots
-        run: |
-          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/rongrong-http.log 2>&1 &
-          sleep 3
-          node scripts/capture-showcase.mjs
-      - name: Save screenshots to repository
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/showcase/*.jpg
-          if ! git diff --cached --quiet; then
-            git commit -m "Add actual mobile screenshots of Rongrong v4.8"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
-      - name: Prepare lightweight static site
-        run: |
+          set -eu
+          test -s index.html
+          test -s preview.html
+          test -s assets.bundle.js
           mkdir -p site/docs/showcase
           cp index.html preview.html assets.bundle.js site/
-          cp docs/showcase/*.jpg site/docs/showcase/
+          if compgen -G 'docs/showcase/*.jpg' > /dev/null; then
+            cp docs/showcase/*.jpg site/docs/showcase/
+          fi
           touch site/.nojekyll
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          echo "Website files prepared:"
+          du -sh site
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: site
-      - id: deployment
+      - name: Deploy website
+        id: deployment
         uses: actions/deploy-pages@v4
