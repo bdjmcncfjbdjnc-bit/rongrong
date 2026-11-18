@@ -43,9 +43,15 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+      - name: Prepare lightweight static site
+        run: |
+          mkdir -p site/docs/showcase
+          cp index.html preview.html assets.bundle.js site/
+          cp docs/showcase/*.jpg site/docs/showcase/
+          touch site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: site
       - id: deployment
         uses: actions/deploy-pages@v4
