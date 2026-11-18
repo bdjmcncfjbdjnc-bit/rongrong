@@ -40,7 +40,8 @@ jobs:
           git add docs/showcase/*.jpg
           if ! git diff --cached --quiet; then
             git commit -m "Add actual mobile screenshots of Rongrong v4.8"
-            git push
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
