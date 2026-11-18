@@ -9,7 +9,7 @@
 
 <sub>在线体验链接将在 GitHub Pages 首次部署成功后开放。</sub>
 
-![绒绒的小屋实际界面总览](docs/showcase/00-overview.svg)
+![绒绒的小屋实际界面总览](docs/showcase/00-overview.jpg)
 
 </div>
 
@@ -33,25 +33,31 @@
 
 ## 界面一览
 
-上方实际界面拼图包含三个主要状态：
+上方拼图由项目浏览器自动截图工作流生成。每次展示用到的三条示例记录仅注入 CI 浏览器，不写入正式应用。主要界面：
 
 - **回忆时间线：** 多条记录按时间排列，小屋场景作为下方的陪伴角落。
 - **空状态回忆：** 没有记录的日期保留轻量提示，不插入虚构的情绪数据。
 - **记录页选择器：** 精力与兴趣选项在页面内展开，不遮挡文字记录区域。
 
+![心情记录页](docs/showcase/02-record.jpg)
+
+![回忆时间线](docs/showcase/03-memory-timeline.jpg)
+
+![六套主题选择](docs/showcase/05-themes.jpg)
+
 ## 开始使用
 
 ### 在线体验
 
-在线地址：<https://bdjmcncfjbdjnc.github.io/rongrong/>
+在线地址：<https://bdjmcncfjbdjnc-bit.github.io/rongrong/>
 
-首次发布时，需要在 GitHub 仓库 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。随后推送代码，`Deploy to GitHub Pages` 工作流会自动发布。首次部署成功后，上方链接即可使用。
+部署方式：仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**；部署工作流位于 `.github/workflows/publish.yml`。首次发布成功后，上方地址即可使用。
 
 ### 本地运行（Windows）
 
 1. 下载仓库 ZIP 并完整解压。
-2. 保持 `index.html` 与 `assets/` 文件夹在同一层。
-3. 双击 `启动绒绒的小屋.bat`，或直接用 Chrome 打开 `index.html`。
+2. 保持 `index.html` 与 `assets.bundle.js` 在同一层。
+3. 用 Chrome 直接打开 `index.html`；也可以在当前目录启动 `python -m http.server 8765`，再访问 `http://localhost:8765`。
 4. `preview.html` 是页面预览入口，不会向正式数据写入示例情绪记录。
 
 ## 数据与隐私
@@ -87,7 +93,7 @@
 
 ## 项目边界
 
-这是一个持续迭代中的个人情绪记录原型，不提供医疗诊断或心理治疗，也不把情绪变化自动归因于某一种原因。项目当前没有账号系统、云端同步或服务端存储。
+这是一个持续迭代中的个人情绪记录原型，不提供医疗诊断或心理治疗，也不把情绪变化自动归因于某一种原因。项目当前没有账号系统、云端同步或服务端存储。所有演示截图中的示例记录均为离线截图环境专用，不会在正式版本中预设。
 
 ---
 
